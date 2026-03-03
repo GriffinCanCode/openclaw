@@ -97,9 +97,10 @@ describe("buildFeishuAgentBody", () => {
 
 describe("handleFeishuMessage command authorization", () => {
   const mockFinalizeInboundContext = vi.fn((ctx: unknown) => ctx);
-  const mockDispatchReplyFromConfig = vi
-    .fn()
-    .mockResolvedValue({ queuedFinal: false, counts: { final: 1 } });
+  const mockDispatchReplyFromConfig = vi.fn().mockResolvedValue({
+    queuedFinal: false,
+    counts: { tool: 0, block: 0, final: 1 },
+  });
   const mockWithReplyDispatcher = vi.fn(
     async ({
       dispatcher,

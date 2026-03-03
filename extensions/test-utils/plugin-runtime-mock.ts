@@ -86,9 +86,10 @@ export function createPluginRuntimeMock(overrides: DeepPartial<PluginRuntime> = 
         convertMarkdownTables: vi.fn((text: string) => text),
       },
       reply: {
-        dispatchReplyWithBufferedBlockDispatcher: vi.fn(
-          async () => undefined,
-        ) as unknown as PluginRuntime["channel"]["reply"]["dispatchReplyWithBufferedBlockDispatcher"],
+        dispatchReplyWithBufferedBlockDispatcher: vi.fn(async () => ({
+          queuedFinal: false,
+          counts: { tool: 0, block: 0, final: 0 },
+        })) as unknown as PluginRuntime["channel"]["reply"]["dispatchReplyWithBufferedBlockDispatcher"],
         createReplyDispatcherWithTyping:
           vi.fn() as unknown as PluginRuntime["channel"]["reply"]["createReplyDispatcherWithTyping"],
         resolveEffectiveMessagesConfig:
@@ -118,15 +119,18 @@ export function createPluginRuntimeMock(overrides: DeepPartial<PluginRuntime> = 
         formatInboundEnvelope: vi.fn(
           (opts: { body: string }) => opts.body,
         ) as unknown as PluginRuntime["channel"]["reply"]["formatInboundEnvelope"],
-        resolveEnvelopeFormatOptions: vi.fn(() => ({
-          template: "channel+name+time",
-        })) as unknown as PluginRuntime["channel"]["reply"]["resolveEnvelopeFormatOptions"],
+        resolveEnvelopeFormatOptions: vi.fn(
+          () => ({}),
+        ) as unknown as PluginRuntime["channel"]["reply"]["resolveEnvelopeFormatOptions"],
       },
       routing: {
         resolveAgentRoute: vi.fn(() => ({
           agentId: "main",
+          channel: "test",
           accountId: "default",
           sessionKey: "agent:main:test:dm:peer",
+          mainSessionKey: "agent:main:main",
+          matchedBy: "default" as const,
         })) as unknown as PluginRuntime["channel"]["routing"]["resolveAgentRoute"],
       },
       pairing: {
